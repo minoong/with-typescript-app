@@ -8,9 +8,13 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@types/react-helmet": "^6.1.1",
+    "axios": "^0.21.1",
     "next": "latest",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "react-intersection-observer": "^8.32.0",
     "styled-components": "^5.3.0",
     "styled-reset": "^4.3.4"
   },
