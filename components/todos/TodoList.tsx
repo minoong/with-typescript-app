@@ -1,9 +1,14 @@
-import React, { useEffect, useLayoutEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import palette from '../../styles/palette';
 import { TodoType } from '../../types/todo';
 import TrashCanIcon from '../../public/statics/trash-can.svg';
 import CheckMarkIcon from '../../public/statics/check-mark.svg';
+import { checkTodosAPI } from '../../lib/api/todos';
+import { useRouter } from 'next/dist/client/router';
+import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 const TodoListBlock = styled.div`
 	width: 100%;
@@ -122,6 +127,26 @@ const TodoListBlock = styled.div`
 	}
 `;
 
+function CircularProgressWithLabel(props: CircularProgressProps & { value: number }) {
+	return (
+		<Box position="relative" display="inline-flex">
+			<CircularProgress variant="determinate" {...props} />
+			<Box
+				top={0}
+				left={0}
+				bottom={0}
+				right={0}
+				position="absolute"
+				display="flex"
+				alignItems="center"
+				justifyContent="center"
+			>
+				<Typography variant="caption" component="div" color="textSecondary">{`${Math.round(props.value)}%`}</Typography>
+			</Box>
+		</Box>
+	);
+}
+
 interface IProps {
 	todos: TodoType[];
 }
@@ -138,10 +163,30 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 	// const addTwoThenMultiplyByFour = pipe(addTwo, multiplyByFour);
 
 	// console.log(addTwoThenMultiplyByFour(3)); // 20
+	const router = useRouter();
 	const summary = useMemo(() => getTodoColorNums(todos), [todos]);
+
+	const checkTodo = useCallback(async (id: number) => {
+		try {
+			const timer = setInterval(() => {
+				setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+			}, 800);
+			console.log(await checkTodosAPI(id));
+			console.log('chekced');
+			//clearInterval(timer);
+			router.push('/');
+		} catch (e) {
+			console.error(e);
+		}
+	}, []);
+
+	const a = 1;
+
+	const [progress, setProgress] = React.useState(10);
 
 	return (
 		<TodoListBlock>
+			<CircularProgressWithLabel value={progress} />
 			<div className="todo-list-header">
 				<p className="todo-list-last-todo">
 					남은 TODO<span>{todos.length}개</span>
@@ -166,10 +211,10 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 							{todo.checked && (
 								<>
 									<TrashCanIcon className="todo-trash-can" onClick={() => {}} />
-									<CheckMarkIcon className="todo-check-mark" onClick={() => {}} />
+									<CheckMarkIcon className="todo-check-mark" onClick={() => checkTodo(todo.id)} />
 								</>
 							)}
-							{!todo.checked && <button type="button" className="todo-button" onClick={() => {}} />}
+							{!todo.checked && <button type="button" className="todo-button" onClick={() => checkTodo(todo.id)} />}
 						</div>
 					</li>
 				))}
