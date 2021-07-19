@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import palette from '../../styles/palette';
 import { TodoType } from '../../types/todo';
@@ -9,6 +9,7 @@ import { useRouter } from 'next/dist/client/router';
 import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import produce from 'immer';
 
 const TodoListBlock = styled.div`
 	width: 100%;
@@ -163,33 +164,41 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 	// const addTwoThenMultiplyByFour = pipe(addTwo, multiplyByFour);
 
 	// console.log(addTwoThenMultiplyByFour(3)); // 20
+	const [localTodos, setLocalTodos] = useState(todos);
 	const router = useRouter();
-	const summary = useMemo(() => getTodoColorNums(todos), [todos]);
+	const summary = useMemo(() => getTodoColorNums(localTodos), [localTodos]);
 
 	const checkTodo = useCallback(async (id: number) => {
 		try {
-			const timer = setInterval(() => {
-				setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
-			}, 800);
-			console.log(await checkTodosAPI(id));
-			console.log('chekced');
-			//clearInterval(timer);
-			router.push('/');
+			// const timer = setInterval(() => {
+			// 	setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+			// }, 800);
+			const data = await checkTodosAPI(id);
+
+			if (200 === data.status) {
+				setLocalTodos(
+					produce((draft) => {
+						const todo = draft.find((todo) => todo.id === id);
+
+						if (todo?.checked !== undefined) {
+							todo.checked = !todo.checked;
+						}
+					}),
+				);
+			}
 		} catch (e) {
 			console.error(e);
 		}
 	}, []);
 
-	const a = 1;
-
-	const [progress, setProgress] = React.useState(10);
+	// const [progress, setProgress] = React.useState(10);
 
 	return (
 		<TodoListBlock>
-			<CircularProgressWithLabel value={progress} />
+			{/* <CircularProgressWithLabel value={progress} /> */}
 			<div className="todo-list-header">
 				<p className="todo-list-last-todo">
-					남은 TODO<span>{todos.length}개</span>
+					남은 TODO<span>{localTodos.length}개</span>
 				</p>
 				<div className="todo-list-header-color">
 					{Object.keys(summary).map((color, index) => (
@@ -201,7 +210,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 				</div>
 			</div>
 			<ul className="todo-list">
-				{todos.map((todo) => (
+				{localTodos.map((todo) => (
 					<li className="todo-item" key={todo.id}>
 						<div className="todo-left-side">
 							<div className={`todo-color-block bg-${todo.color}`} />

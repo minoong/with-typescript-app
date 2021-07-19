@@ -6,6 +6,10 @@ const globalStyle = css`
 	* {
 		box-sizing: border-box;
 	}
+	html,
+	body {
+		height: 100%;
+	}
 	body {
 		font-family: Noto Sans, Noto Sans KR;
 	}
