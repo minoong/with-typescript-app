@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import BrushIcon from '../../public/statics/paintbrush.svg';
 import palette from '../../styles/palette';
+import { TodoType } from '../../types/todo';
 
 const AddTodoBlock = styled.div`
 	padding: 16px;
@@ -46,6 +47,9 @@ const AddTodoBlock = styled.div`
 				}
 				cursor: pointer;
 			}
+			.add-todo-selected-color {
+				border: 2px solid ${palette.gray_71};
+			}
 		}
 	}
 
@@ -83,6 +87,7 @@ const AddTodoBlock = styled.div`
 
 const AddTodo: React.FC = () => {
 	const [text, setText] = useState<string>('');
+	const [selectedColor, setSelectedColor] = useState<TodoType['color']>();
 	return (
 		<AddTodoBlock>
 			<div className="add-todo-header">
@@ -94,7 +99,14 @@ const AddTodo: React.FC = () => {
 			<div className="add-todo-colors-wrapper">
 				<div className="add-todo-color-list">
 					{['red', 'orange', 'yellow', 'green', 'blue', 'navy'].map((color, index) => (
-						<button key={index} type="button" className={`bg-${color} add-todo-color-button`} onClick={() => {}} />
+						<button
+							key={index}
+							type="button"
+							className={`bg-${color} add-todo-color-button
+                        ${color === selectedColor ? 'add-todo-selected-color' : ''}
+                        `}
+							onClick={() => setSelectedColor(color as TodoType['color'])}
+						/>
 					))}
 				</div>
 				<BrushIcon />
