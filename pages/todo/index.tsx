@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import React from 'react';
 import styled from 'styled-components';
+import Footer from '../../components/todos/Footer';
 import TodoList from '../../components/todos/TodoList';
 import { getTodosAPI } from '../../lib/api/todos';
 import { TodoType } from '../../types/todo';
@@ -18,6 +19,7 @@ const IndexPage: NextPage<IProps> = ({ todos }) => {
 	return (
 		<Container>
 			<TodoList todos={todos} />
+			<Footer />
 		</Container>
 	);
 };

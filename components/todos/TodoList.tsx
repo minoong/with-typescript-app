@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import palette from '../../styles/palette';
 import { TodoType } from '../../types/todo';
 import TrashCanIcon from '../../public/statics/trash-can.svg';
 import CheckMarkIcon from '../../public/statics/check-mark.svg';
-import { checkTodosAPI } from '../../lib/api/todos';
+import { checkTodosAPI, deleteTodoAPI } from '../../lib/api/todos';
 import { useRouter } from 'next/dist/client/router';
 import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
@@ -191,6 +191,19 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 		}
 	}, []);
 
+	const deleteTodo = async (id: number) => {
+		try {
+			const { status } = await deleteTodoAPI(id);
+
+			if (status === 200) {
+				const newTodos = localTodos.filter((todo) => todo.id !== id);
+				setLocalTodos(() => newTodos);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	// const [progress, setProgress] = React.useState(10);
 
 	return (
@@ -219,7 +232,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 						<div className="todo-right-side">
 							{todo.checked && (
 								<>
-									<TrashCanIcon className="todo-trash-can" onClick={() => {}} />
+									<TrashCanIcon className="todo-trash-can" onClick={() => deleteTodo(todo.id)} />
 									<CheckMarkIcon className="todo-check-mark" onClick={() => checkTodo(todo.id)} />
 								</>
 							)}
