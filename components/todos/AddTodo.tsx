@@ -6,6 +6,7 @@ import { addTodoAPI } from '../../lib/api/todos';
 import BrushIcon from '../../public/statics/paintbrush.svg';
 import palette from '../../styles/palette';
 import { TodoType } from '../../types/todo';
+import Footer from './Footer';
 
 const AddTodoBlock = styled.div`
 	padding: 16px;
@@ -132,6 +133,7 @@ const AddTodo: React.FC = () => {
 				<BrushIcon />
 			</div>
 			<textarea value={text} placeholder="할 일을 입력해주세요." onChange={(e) => setText(e.currentTarget.value)} />
+			<Footer />
 		</AddTodoBlock>
 	);
 };

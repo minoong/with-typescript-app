@@ -32,10 +32,11 @@ const FooterBlock = styled.footer`
 
 const Footer: React.FC = () => {
 	const router = useRouter();
+	const isMain = router.pathname === '/todo';
 	return (
 		<FooterBlock>
-			<button type="button" className="footer-button" onClick={() => router.push('/todo/add')}>
-				+
+			<button type="button" className="footer-button" onClick={() => router.push(isMain ? '/todo/add' : '/todo')}>
+				{isMain ? '+' : '-'}
 			</button>
 		</FooterBlock>
 	);
