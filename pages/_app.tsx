@@ -3,6 +3,7 @@ import React from 'react';
 import Header from '../components/todos/Header';
 import GlobalStyle from '../styles/GlobalStyle';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import wrapper from '../store';
 
 const _app = ({ Component, pageProps }: AppProps) => {
 	return (
@@ -14,4 +15,4 @@ const _app = ({ Component, pageProps }: AppProps) => {
 	);
 };
 
-export default _app;
+export default wrapper.withRedux(_app);
