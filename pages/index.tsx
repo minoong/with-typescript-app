@@ -4,37 +4,28 @@ import styled from 'styled-components';
 import Layout from '../components/Layout';
 import TodoList from '../components/todos/TodoList';
 import { getTodosAPI } from '../lib/api/todos';
+import wrapper from '../store';
 import { TodoType } from '../types/todo';
 
 const Container = styled.div`
 	padding: 20px;
 `;
 
-interface IProps {
-	todos: TodoType[];
-}
-
-const IndexPage: NextPage<IProps> = ({ todos }) => {
+const IndexPage: NextPage = () => {
 	console.log(process.env.NEXT_PUBLIC_API_URL);
-	return (
-		<Container>
-			<TodoList todos={todos} />
-		</Container>
-	);
+	return <Container></Container>;
 };
+// export const getServerSideProps = wrapper.getServerSideProps((store) => ({ req, res, ...etc }) => {
+// 	console.log(`'2. Page.getServerSideProps uses the store to dispatch things'`);
+// 	console.log(store);
+// });
 
-export const getServerSideProps: GetServerSideProps = async () => {
-	try {
-		const { data } = await getTodosAPI();
-		return {
-			props: {
-				todos: data,
-			},
-		};
-	} catch (err) {
-		console.error(err);
-		return { props: {} };
-	}
-};
-
+export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, res, ...etc }) => {
+	const { data } = await getTodosAPI();
+	return {
+		props: {
+			todos: data,
+		},
+	};
+});
 export default IndexPage;
