@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import palette from '../../styles/palette';
 
@@ -56,9 +56,34 @@ const HeaderBlock = styled.div`
 			}
 		}
 	}
+	.modal-wrapper {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: fixed;
+		top: 0;
+		left: 0;
+		.modal-background {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.75);
+			z-index: 10;
+		}
+		.modal-contents {
+			width: 400px;
+			height: 400px;
+			background-color: white;
+			z-index: 11;
+		}
+	}
 `;
 
 const Header: React.FC = () => {
+	const [modal, setModal] = useState(false);
+	const onModal = () => setModal((state) => !state);
 	return (
 		<HeaderBlock>
 			<Link href="/">
@@ -67,13 +92,19 @@ const Header: React.FC = () => {
 				</a>
 			</Link>
 			<div className="header-auth-wrapper">
-				<button className="header-sign-up-button" type="button">
+				<button className="header-sign-up-button" type="button" onClick={onModal}>
 					Sign Up
 				</button>
 				<button className="header-sign-in-button" type="button">
 					Sign In
 				</button>
 			</div>
+			{modal && (
+				<div className="modal-wrapper">
+					<div className="modal-background" role="presentation" onClick={onModal}></div>
+					<div className="modal-contents"></div>
+				</div>
+			)}
 		</HeaderBlock>
 	);
 };
