@@ -10,6 +10,8 @@ import CircularProgress, { CircularProgressProps } from '@material-ui/core/Circu
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import produce from 'immer';
+import { useDispatch } from 'react-redux';
+import { setTodo } from '../../store/todo';
 
 const TodoListBlock = styled.div`
 	width: 100%;
@@ -164,6 +166,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 	// const addTwoThenMultiplyByFour = pipe(addTwo, multiplyByFour);
 
 	// console.log(addTwoThenMultiplyByFour(3)); // 20
+	const dispatch = useDispatch();
 	const [localTodos, setLocalTodos] = useState(todos);
 	const router = useRouter();
 	const summary = useMemo(() => getTodoColorNums(localTodos), [localTodos]);
@@ -197,6 +200,7 @@ const TodoList: React.FC<IProps> = ({ todos }) => {
 
 			if (status === 200) {
 				const newTodos = localTodos.filter((todo) => todo.id !== id);
+				dispatch(setTodo(newTodos));
 				setLocalTodos(() => newTodos);
 			}
 		} catch (err) {

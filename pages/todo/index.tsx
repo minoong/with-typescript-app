@@ -1,9 +1,13 @@
 import { GetServerSideProps, NextPage } from 'next';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Footer from '../../components/todos/Footer';
 import TodoList from '../../components/todos/TodoList';
 import { getTodosAPI } from '../../lib/api/todos';
+import wrapper from '../../store';
+import { RootState } from '../../store/modules';
+import { setTodo } from '../../store/todo';
 import { TodoType } from '../../types/todo';
 
 const Container = styled.div`
@@ -14,7 +18,8 @@ interface IProps {
 	todos: TodoType[];
 }
 
-const IndexPage: NextPage<IProps> = ({ todos }) => {
+const IndexPage: NextPage<IProps> = () => {
+	const todos = useSelector((state: RootState) => state.todo.todos);
 	console.log(process.env.NEXT_PUBLIC_API_URL);
 	return (
 		<Container>
@@ -24,18 +29,14 @@ const IndexPage: NextPage<IProps> = ({ todos }) => {
 	);
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-	try {
-		const { data } = await getTodosAPI();
-		return {
-			props: {
-				todos: data,
-			},
-		};
-	} catch (err) {
-		console.error(err);
-		return { props: {} };
-	}
-};
+export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, res, ...etc }) => {
+	const { data } = await getTodosAPI();
+
+	store.dispatch(setTodo(data));
+
+	return {
+		props: {},
+	};
+});
 
 export default IndexPage;
