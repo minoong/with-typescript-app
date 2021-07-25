@@ -2,6 +2,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import useSWR from 'swr';
 import Footer from '../../components/todos/Footer';
 import TodoList from '../../components/todos/TodoList';
 import { getTodosAPI } from '../../lib/api/todos';
@@ -20,6 +21,9 @@ interface IProps {
 
 const IndexPage: NextPage<IProps> = () => {
 	const todos = useSelector((state: RootState) => state.todo.todos);
+
+	const { data } = useSWR('/api/todo', getTodosAPI);
+
 	console.log(process.env.NEXT_PUBLIC_API_URL);
 	return (
 		<Container>

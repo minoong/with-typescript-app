@@ -154,6 +154,8 @@ interface IProps {
 	todos: TodoType[];
 }
 
+const a = function () {};
+
 const TodoList: React.FC<IProps> = ({ todos }) => {
 	// const config = new Map();
 	// config.set('charset', 'utf-8');
