@@ -6,8 +6,12 @@ import PersonIcon from '../../public/statics/user.svg';
 import OpenedEyeIcon from '../../public/statics/eye.svg';
 import ClosedEyeIcon from '../../public/statics/eye-off.svg';
 import Input from '../common/Input';
+import 'react-datepicker/dist/react-datepicker.css';
+import palette from '../../styles/palette';
+import Selector from '../common/Selector';
+import { dayList, monthList, yearList } from '../../lib/data/staticData';
 
-const SignUpModalBlock = styled.div`
+const SignUpModalBlock = styled.form`
 	width: 568px;
 	padding: 32px;
 	background-color: white;
@@ -29,6 +33,35 @@ const SignUpModalBlock = styled.div`
 			cursor: pointer;
 		}
 	}
+
+	.sigh-up-birthday-label {
+		font-size: 16px;
+		font-weight: bold;
+		margin-top: 16px;
+		margin-bottom: 8px;
+	}
+
+	.sign-up-birthday-info {
+		margin-bottom: 16px;
+		color: ${palette.charcoal};
+	}
+
+	.sign-up-birthday-sel-wrapper {
+		display: flex;
+		margin-bottom: 24px;
+		.sign-up-birthday-month {
+			margin-right: 16px;
+			flex: 1 1 33.3%;
+		}
+		.sign-up-birthday-day {
+			margin-right: 16px;
+			flex: 1 1 33.3%;
+		}
+		.sign-up-birthday-year {
+			margin-right: 16px;
+			flex: 1 1 33.3%;
+		}
+	}
 `;
 
 interface TForm extends InputHTMLAttributes<HTMLInputElement> {
@@ -38,7 +71,11 @@ interface TForm extends InputHTMLAttributes<HTMLInputElement> {
 	password: string;
 }
 
-const SignUpModal: React.FC = () => {
+interface IProps {
+	closeModal: () => void;
+}
+
+const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 	const [form, setForm] = useState<TForm>({
 		email: '',
 		lastname: '',
@@ -46,6 +83,14 @@ const SignUpModal: React.FC = () => {
 		password: '',
 	});
 	const [hidePassword, setHidePassword] = useState(true);
+	const [birthday, setBirthday] = useState<
+		| {
+				month: string;
+				day: string;
+				year: string;
+		  }
+		| undefined
+	>();
 
 	const onChangeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target;
@@ -56,12 +101,12 @@ const SignUpModal: React.FC = () => {
 	};
 
 	const onToggleHidePassword = () => {
-		setHidePassword((state) => !state);
+		setHidePassword((hidePassword) => !hidePassword);
 	};
 
 	return (
 		<SignUpModalBlock>
-			<CloseIcon className="modal-close-icon" />
+			<CloseIcon className="modal-close-icon" onClick={closeModal} />
 			<div className="input-wrapper">
 				<Input
 					placeholder="이메일"
@@ -106,7 +151,24 @@ const SignUpModal: React.FC = () => {
 					name="password"
 					value={form.password}
 					onChange={onChangeForm}
+					autoComplete="off"
 				/>
+			</div>
+			<div className="sigh-up-birthday-label">생일</div>
+			<div className="sign-up-birthday-info">
+				만 18세 이상의 성인만 회원으로 가입할 수 있습니다. 생일은 다른 이용자에게 제공되지 않습니다.
+			</div>
+
+			<div className="sign-up-birthday-sel-wrapper">
+				<div className="sign-up-birthday-month">
+					<Selector options={monthList} disabledOptions={['월']} defaultValue="월" />
+				</div>
+				<div className="sign-up-birthday-day">
+					<Selector options={dayList} disabledOptions={['일']} defaultValue="일" />
+				</div>
+				<div className="sign-up-birthday-year">
+					<Selector options={yearList} disabledOptions={['년']} defaultValue="년" />
+				</div>
 			</div>
 		</SignUpModalBlock>
 	);
