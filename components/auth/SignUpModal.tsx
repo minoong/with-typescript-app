@@ -10,6 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import palette from '../../styles/palette';
 import Selector from '../common/Selector';
 import { dayList, monthList, yearList } from '../../lib/data/staticData';
+import Button from '../common/Button';
 
 const SignUpModalBlock = styled.form`
 	width: 568px;
@@ -61,6 +62,12 @@ const SignUpModalBlock = styled.form`
 			margin-right: 16px;
 			flex: 1 1 33.3%;
 		}
+	}
+
+	.sign-up-submit-wrapper {
+		margin-bottom: 16px;
+		padding-bottom: 16px;
+		border-bottom: 1px solid ${palette.gray_eb};
 	}
 `;
 
@@ -173,6 +180,10 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 				<div className="sign-up-birthday-year">
 					<Selector name="year" options={yearList} disabledOptions={['년']} defaultValue="년" onChange={onChangeForm} />
 				</div>
+			</div>
+
+			<div className="sign-up-submit-wrapper">
+				<Button type="submit">Sign Up</Button>
 			</div>
 		</SignUpModalBlock>
 	);
