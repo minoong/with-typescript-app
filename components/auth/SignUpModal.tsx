@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState } from 'react';
+import React, { HTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, useState } from 'react';
 import styled from 'styled-components';
 import CloseIcon from '../../public/statics/x-mark.svg';
 import EmailIcon from '../../public/statics/email.svg';
@@ -64,11 +64,14 @@ const SignUpModalBlock = styled.form`
 	}
 `;
 
-interface TForm extends InputHTMLAttributes<HTMLInputElement> {
+interface TForm extends HTMLAttributes<HTMLSelectElement | HTMLInputElement> {
 	email: string;
 	lastname: string;
 	firstname: string;
 	password: string;
+	month: string;
+	day: string;
+	year: string;
 }
 
 interface IProps {
@@ -81,18 +84,13 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 		lastname: '',
 		firstname: '',
 		password: '',
+		month: '',
+		day: '',
+		year: '',
 	});
 	const [hidePassword, setHidePassword] = useState(true);
-	const [birthday, setBirthday] = useState<
-		| {
-				month: string;
-				day: string;
-				year: string;
-		  }
-		| undefined
-	>();
 
-	const onChangeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const onChangeForm = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = event.target;
 		setForm((form) => ({
 			...form,
@@ -161,13 +159,19 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 
 			<div className="sign-up-birthday-sel-wrapper">
 				<div className="sign-up-birthday-month">
-					<Selector options={monthList} disabledOptions={['월']} defaultValue="월" />
+					<Selector
+						name="month"
+						options={monthList}
+						disabledOptions={['월']}
+						defaultValue="월"
+						onChange={onChangeForm}
+					/>
 				</div>
 				<div className="sign-up-birthday-day">
-					<Selector options={dayList} disabledOptions={['일']} defaultValue="일" />
+					<Selector name="day" options={dayList} disabledOptions={['일']} defaultValue="일" onChange={onChangeForm} />
 				</div>
 				<div className="sign-up-birthday-year">
-					<Selector options={yearList} disabledOptions={['년']} defaultValue="년" />
+					<Selector name="year" options={yearList} disabledOptions={['년']} defaultValue="년" onChange={onChangeForm} />
 				</div>
 			</div>
 		</SignUpModalBlock>
