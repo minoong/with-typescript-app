@@ -11,6 +11,9 @@ import palette from '../../styles/palette';
 import Selector from '../common/Selector';
 import { dayList, monthList, yearList } from '../../lib/data/staticData';
 import Button from '../common/Button';
+import { signupAPI } from '../../lib/api/auth';
+import { useDispatch } from 'react-redux';
+import { setLoggedUser } from '../../store/hey';
 
 const SignUpModalBlock = styled.form`
 	width: 568px;
@@ -86,6 +89,7 @@ interface IProps {
 }
 
 const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
+	const dispatch = useDispatch();
 	const [form, setForm] = useState<TForm>({
 		email: '',
 		lastname: '',
@@ -109,8 +113,33 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 		setHidePassword((hidePassword) => !hidePassword);
 	};
 
+	const onSubmitSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		try {
+			const { email, firstname, lastname, password } = form;
+			const signUpBody = {
+				email,
+				firstname,
+				lastname,
+				password,
+				birthday: new Date(
+					`${form.year.replace('년', '')}-${form.month.replace('월', '')}-${form.day.replace('일', '')}`,
+				).toISOString(),
+			};
+
+			console.log(signUpBody);
+
+			const { data } = await signupAPI(signUpBody);
+			console.log(data);
+			dispatch(setLoggedUser(data));
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	return (
-		<SignUpModalBlock>
+		<SignUpModalBlock onSubmit={onSubmitSignUp}>
 			<CloseIcon className="modal-close-icon" onClick={closeModal} />
 			<div className="input-wrapper">
 				<Input

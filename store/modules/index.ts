@@ -1,9 +1,11 @@
 import { HYDRATE } from 'next-redux-wrapper';
 import { AnyAction, combineReducers } from 'redux';
 import todo, { TodoReduxState } from '../todo';
+import user from '../hey';
 
 const rootReducer = combineReducers({
 	todo,
+	user,
 });
 
 const reducer = (state: any, action: AnyAction) => {
@@ -14,6 +16,7 @@ const reducer = (state: any, action: AnyAction) => {
 		default: {
 			const combineReducer = combineReducers({
 				todo,
+				user,
 			});
 			return combineReducer(state, action);
 		}
