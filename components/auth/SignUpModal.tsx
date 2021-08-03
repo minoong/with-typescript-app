@@ -14,6 +14,8 @@ import Button from '../common/Button';
 import { signupAPI } from '../../lib/api/auth';
 import { useDispatch } from 'react-redux';
 import { setLoggedUser } from '../../store/hey';
+import { useRecoilState } from 'recoil';
+import { CommonState } from '../../recoil/common';
 
 const SignUpModalBlock = styled.form`
 	width: 568px;
@@ -100,6 +102,9 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 		year: '',
 	});
 	const [hidePassword, setHidePassword] = useState(true);
+	const [commonState, setCommonState] = useRecoilState(CommonState);
+
+	console.log(commonState);
 
 	const onChangeForm = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = event.target;
@@ -116,8 +121,15 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 	const onSubmitSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
+		setCommonState(true);
+
 		try {
 			const { email, firstname, lastname, password } = form;
+
+			if (!email || !firstname || !lastname || !password) {
+				return;
+			}
+
 			const signUpBody = {
 				email,
 				firstname,
@@ -149,6 +161,9 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 					name="email"
 					value={form.email}
 					onChange={onChangeForm}
+					useValidation
+					isValid={!!form.email}
+					errorMessage={'이메일을 입력해주세요.'}
 				/>
 			</div>
 			<div className="input-wrapper">

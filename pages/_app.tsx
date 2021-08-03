@@ -4,6 +4,7 @@ import GlobalStyle from '../styles/GlobalStyle';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import wrapper from '../store';
 import Head from 'next/head';
+import { RecoilRoot } from 'recoil';
 
 const _app = ({ Component, pageProps }: AppProps) => {
 	return (
@@ -15,7 +16,9 @@ const _app = ({ Component, pageProps }: AppProps) => {
 			</Head>
 			<GlobalStyle />
 			<CssBaseline />
-			<Component {...pageProps} />
+			<RecoilRoot>
+				<Component {...pageProps} />
+			</RecoilRoot>
 			<div id="root-modal" />
 		</>
 	);
