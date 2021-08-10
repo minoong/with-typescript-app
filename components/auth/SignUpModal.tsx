@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, useState } from 'react';
+import React, { HTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import CloseIcon from '../../public/statics/x-mark.svg';
 import EmailIcon from '../../public/statics/email.svg';
@@ -16,6 +16,8 @@ import { useDispatch } from 'react-redux';
 import { setLoggedUser } from '../../store/hey';
 import { useRecoilState } from 'recoil';
 import { CommonState } from '../../recoil/common';
+import { hasNumberOrSymbol, validPassword, validPasswordLange } from '../../lib/utils';
+import PasswordWarning from './PasswordWarning';
 
 const SignUpModalBlock = styled.form`
 	width: 568px;
@@ -102,9 +104,8 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 		year: '',
 	});
 	const [hidePassword, setHidePassword] = useState(true);
+	const [passwordFocused, setPasswordFocused] = useState(false);
 	const [commonState, setCommonState] = useRecoilState(CommonState);
-
-	console.log(commonState);
 
 	const onChangeForm = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = event.target;
@@ -113,6 +114,17 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 			[name]: value,
 		}));
 	};
+
+	const onFocusPassword = () => {
+		setPasswordFocused(true);
+	};
+
+	const isPasswordValid = useMemo(
+		() => validPassword(form.password, form.lastname, form.email),
+		[form.password, form.lastname, form.email],
+	);
+	const isPasswordCheckLange = useMemo(() => validPasswordLange(form.password), [form.password]);
+	const isPasswordHasNumberOrSymbol = useMemo(() => hasNumberOrSymbol(form.password), [form.password]);
 
 	const onToggleHidePassword = () => {
 		setHidePassword((hidePassword) => !hidePassword);
@@ -201,8 +213,17 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 					value={form.password}
 					onChange={onChangeForm}
 					autoComplete="off"
+					onFocus={onFocusPassword}
+					isValid={!isPasswordValid && !isPasswordCheckLange && !isPasswordHasNumberOrSymbol}
+					errorMessage="패스워드를 입력하세요."
 				/>
 			</div>
+			{passwordFocused && (
+				<>
+					<PasswordWarning isValid={!isPasswordCheckLange} text="패스워드는 8~20자 이내로 해주세요." />
+					<PasswordWarning isValid={!isPasswordHasNumberOrSymbol} text="숫자와 특수문자를 포함해주세요." />
+				</>
+			)}
 			<div className="sigh-up-birthday-label">생일</div>
 			<div className="sign-up-birthday-info">
 				만 18세 이상의 성인만 회원으로 가입할 수 있습니다. 생일은 다른 이용자에게 제공되지 않습니다.
