@@ -39,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			lastname,
 			password: hashedPassword,
 			birthday,
-			profileImage: '/static/image/user/default_user_profile_image.jpg',
+			profileImage: '/statics/images/users/default_user_profile_image.jpg',
 		};
 
 		Data.user.addUser([...users, newUser]);

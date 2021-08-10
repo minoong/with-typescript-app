@@ -1,9 +1,12 @@
 import Link from 'next/link';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useModal from '../../hooks/useModal';
+import { RootState } from '../../store/modules';
 import palette from '../../styles/palette';
 import SignUpModal from '../auth/SignUpModal';
+import MenuIcon from '../../public/statics/menu-1.svg';
 
 const HeaderBlock = styled.div`
 	position: sticky;
@@ -64,10 +67,36 @@ const HeaderBlock = styled.div`
 		background-color: white;
 		z-index: 11;
 	}
+
+	.header-user-profile {
+		display: flex;
+		align-items: center;
+		height: 42px;
+		padding: 0 6px 0 16px;
+		border: 0;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+		border-radius: 21px;
+		background-color: white;
+		cursor: pointer;
+		outline: none;
+		&:hover {
+			box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
+		}
+		path {
+			width: 12px;
+		}
+		.header-user-profile-image {
+			margin-left: 0.5rem;
+			width: 1.875rem;
+			height: 1.875rem;
+			border-radius: 50%;
+		}
+	}
 `;
 
 const Header: React.FC = () => {
 	const { openModal, ModalPortal, closeModal } = useModal();
+	const user = useSelector((state: RootState) => state.user);
 	return (
 		<HeaderBlock>
 			<Link href="/">
@@ -75,14 +104,22 @@ const Header: React.FC = () => {
 					<div className="header-logo-text">Hey</div>
 				</a>
 			</Link>
-			<div className="header-auth-wrapper">
-				<button className="header-sign-up-button" type="button" onClick={openModal}>
-					Sign Up
+			{!user.isLogged && (
+				<div className="header-auth-wrapper">
+					<button className="header-sign-up-button" type="button" onClick={openModal}>
+						Sign Up
+					</button>
+					<button className="header-sign-in-button" type="button">
+						Sign In
+					</button>
+				</div>
+			)}
+			{user.isLogged && (
+				<button className="header-user-profile" type="button">
+					<MenuIcon />
+					<img src={user.profileImage} className="header-user-profile-image" alt="" />
 				</button>
-				<button className="header-sign-in-button" type="button">
-					Sign In
-				</button>
-			</div>
+			)}
 			<ModalPortal>
 				<SignUpModal closeModal={closeModal} />
 			</ModalPortal>

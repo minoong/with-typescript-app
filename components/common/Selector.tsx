@@ -1,8 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+import { CommonState } from '../../recoil/common';
+import { RootState } from '../../store/modules';
 import palette from '../../styles/palette';
 
-const SelectorBlock = styled.div`
+const SelectorBlock = styled.div<{ isValid: boolean; validateMode: boolean }>`
 	width: 100%;
 	height: 46px;
 
@@ -24,17 +28,28 @@ const SelectorBlock = styled.div`
 			border-color: ${palette.dark_cyan};
 		}
 	}
+
+	${({ isValid, validateMode }) =>
+		validateMode &&
+		css`
+			select {
+				border-color: ${isValid ? palette.dark_cyan : palette.tawny} !important;
+				background-color: ${isValid ? 'white' : palette.snow};
+			}
+		`}
 `;
 
 interface IProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 	options?: string[];
 	value?: string;
 	disabledOptions?: string[];
+	isValid?: boolean;
 }
 
-const Selector: React.FC<IProps> = ({ options = [], disabledOptions = [], ...props }) => {
+const Selector: React.FC<IProps> = ({ options = [], disabledOptions = [], isValid, ...props }) => {
+	const validateMode = useRecoilValue(CommonState);
 	return (
-		<SelectorBlock>
+		<SelectorBlock isValid={!!isValid} validateMode={validateMode}>
 			<select {...props}>
 				{disabledOptions.map((option, index) => (
 					<option key={index} value={option} disabled>

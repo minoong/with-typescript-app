@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, useMemo, useState } from 'react';
+import React, { HTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import CloseIcon from '../../public/statics/x-mark.svg';
 import EmailIcon from '../../public/statics/email.svg';
@@ -76,6 +76,12 @@ const SignUpModalBlock = styled.form`
 		padding-bottom: 16px;
 		border-bottom: 1px solid ${palette.gray_eb};
 	}
+
+	.sign-in-wrapper {
+		color: ${palette.dark_cyan};
+		margin-left: 8px;
+		cursor: pointer;
+	}
 `;
 
 interface TForm extends HTMLAttributes<HTMLSelectElement | HTMLInputElement> {
@@ -106,6 +112,14 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 	const [hidePassword, setHidePassword] = useState(true);
 	const [passwordFocused, setPasswordFocused] = useState(false);
 	const [commonState, setCommonState] = useRecoilState(CommonState);
+
+	useEffect(() => {
+		setCommonState(false);
+
+		return () => {
+			setCommonState(false);
+		};
+	}, []);
 
 	const onChangeForm = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = event.target;
@@ -157,6 +171,8 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 			const { data } = await signupAPI(signUpBody);
 			console.log(data);
 			dispatch(setLoggedUser(data));
+
+			//closeModal();
 		} catch (err) {
 			console.error(err);
 		}
@@ -237,18 +253,39 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
 						disabledOptions={['월']}
 						defaultValue="월"
 						onChange={onChangeForm}
+						isValid={!!form.month}
 					/>
 				</div>
 				<div className="sign-up-birthday-day">
-					<Selector name="day" options={dayList} disabledOptions={['일']} defaultValue="일" onChange={onChangeForm} />
+					<Selector
+						name="day"
+						options={dayList}
+						disabledOptions={['일']}
+						defaultValue="일"
+						onChange={onChangeForm}
+						isValid={!!form.day}
+					/>
 				</div>
 				<div className="sign-up-birthday-year">
-					<Selector name="year" options={yearList} disabledOptions={['년']} defaultValue="년" onChange={onChangeForm} />
+					<Selector
+						name="year"
+						options={yearList}
+						disabledOptions={['년']}
+						defaultValue="년"
+						onChange={onChangeForm}
+						isValid={!!form.year}
+					/>
 				</div>
 			</div>
 
 			<div className="sign-up-submit-wrapper">
 				<Button type="submit">Sign Up</Button>
+			</div>
+			<div>
+				이미 계정이 있나요?
+				<span className="sign-in-wrapper" role="presentation">
+					Sign In
+				</span>
 			</div>
 		</SignUpModalBlock>
 	);
